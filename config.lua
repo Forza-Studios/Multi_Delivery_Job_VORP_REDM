@@ -1,14 +1,14 @@
 Config = {}
 
 -- ==========================================================================
--- Phase 1: Meet Contractor (blip + seated NPC only)
+-- Phase 1: Meet Contractor (blip + drinking NPC only)
 -- ==========================================================================
 
 Config.Contractor = {
     model = "re_rallysetup_males_01",
-    coords = vector4(-243.0108, 770.7150, 118.0853, 43.0443),
-    -- Chair sit scenario. Snaps to the nearby chair prop.
-    scenario = "PROP_HUMAN_SEAT_CHAIR",
+    coords = vector4(-245.3929, 764.3901, 121.0174, 20.9424),
+    -- Standing drinking scenario.
+    scenario = "WORLD_HUMAN_DRINKING",
 }
 
 Config.Blip = {
