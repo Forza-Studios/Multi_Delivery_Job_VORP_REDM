@@ -1,14 +1,13 @@
 Config = {}
 
 -- ==========================================================================
--- Phase 1: Meet Contractor (blip + drinking NPC only)
+-- Phase 1: Meet Contractor (blip + NPC only)
 -- ==========================================================================
 
 Config.Contractor = {
     model = "re_rallysetup_males_01",
-    coords = vector4(-245.3929, 764.3901, 121.0174, 20.9424),
-    -- Standing drinking scenario.
-    scenario = "WORLD_HUMAN_DRINKING",
+    coords = vector4(-245.3929, 764.3901, 120.0174, 20.9424),
+    scenario = "WORLD_HUMAN_SMOKE",
 }
 
 Config.Blip = {

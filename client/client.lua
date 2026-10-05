@@ -1,4 +1,4 @@
--- coi_multi_deli | Phase 1: Meet Contractor blip + drinking NPC
+-- coi_multi_deli | Phase 1: Meet Contractor blip + NPC
 
 local contractorPed = nil
 local contractorBlip = nil
@@ -97,7 +97,7 @@ local function SpawnContractor()
     SetEntityInvincible(ped, true)
     SetBlockingOfNonTemporaryEvents(ped, true)
 
-    -- Standing drinking idle (from Config.Contractor.scenario).
+    -- Standing smoking idle.
     TaskStartScenarioInPlace(ped, joaat(cfg.scenario), -1, true, false, false, false)
     Wait(1500)
     FreezeEntityPosition(ped, true)
