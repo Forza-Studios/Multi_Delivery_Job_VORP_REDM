@@ -6,6 +6,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Active contract pill, top-left. Always visible while a job is active. -->
+  <div id="active-pill" class="hidden">
+    <span class="pill-dot"></span>
+    <span id="pill-text">ACTIVE: -</span>
+    <button id="pill-cancel" title="Cancel contract">&#10005;</button>
+  </div>
+
   <div id="jobs-board" class="hidden">
     <div class="board-frame">
 
@@ -18,15 +25,7 @@
         </div>
         <nav id="job-nav">
           <button class="nav-item active" data-filter="all"><span class="nav-ico">&#9783;</span>All Jobs</button>
-          <button class="nav-item" data-filter="hunting"><span class="nav-ico">&#9679;</span>Hunting</button>
-          <button class="nav-item" data-filter="mining"><span class="nav-ico">&#9874;</span>Mining</button>
-          <button class="nav-item" data-filter="farming"><span class="nav-ico">&#10087;</span>Farming</button>
-          <button class="nav-item" data-filter="trading"><span class="nav-ico">&#9785;</span>Traders</button>
-          <button class="nav-item" data-filter="law"><span class="nav-ico">&#9733;</span>Law &amp; Order</button>
-          <button class="nav-item" data-filter="bounty"><span class="nav-ico">&#9678;</span>Bounty Hunting</button>
-          <button class="nav-item" data-filter="moonshining"><span class="nav-ico">&#9749;</span>Moonshining</button>
-          <button class="nav-item" data-filter="crafting"><span class="nav-ico">&#9874;</span>Crafting</button>
-          <button class="nav-item" data-filter="services"><span class="nav-ico">&#9990;</span>Services</button>
+          <!-- per-job buttons are built from Config.Jobs at runtime -->
         </nav>
       </aside>
 
@@ -58,6 +57,7 @@
         <h4>REWARDS</h4>
         <div id="detail-rewards"></div>
         <button id="btn-start">START JOB <span>&#10095;</span></button>
+        <button id="btn-cancel" class="hidden">CANCEL CONTRACT <span>&#10005;</span></button>
       </aside>
 
     </div>

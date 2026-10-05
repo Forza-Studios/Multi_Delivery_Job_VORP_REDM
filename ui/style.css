@@ -174,5 +174,38 @@ html, body {
 }
 #btn-start:hover { filter: brightness(1.1); }
 
+#btn-cancel {
+  margin-top: auto;
+  background: #3a1410; border: 1px solid #a33b2e;
+  color: #f0c9b8; font-family: inherit;
+  font-size: 16px; font-weight: 700; letter-spacing: 2px;
+  padding: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+#btn-cancel:hover { background: #5a1f18; }
+
+/* ---------- active contract pill (top-left, always on screen) ---------- */
+#active-pill {
+  position: fixed; top: 14px; right: 14px; z-index: 9999;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(16, 12, 8, 0.92);
+  border: 1px solid #d9b36a; border-radius: 20px;
+  color: #f2e6c8; font-size: 13px; letter-spacing: 1px;
+  padding: 7px 8px 7px 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.7);
+}
+.pill-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #7ec850; box-shadow: 0 0 6px #7ec850;
+  flex-shrink: 0;
+}
+#pill-cancel {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: transparent; border: 1px solid #6b532f;
+  color: #d9b36a; font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+#pill-cancel:hover { background: #5a1f18; border-color: #a33b2e; color: #f0c9b8; }
+
 .main::-webkit-scrollbar, .detail::-webkit-scrollbar { width: 8px; }
 .main::-webkit-scrollbar-thumb, .detail::-webkit-scrollbar-thumb { background: #4a3820; }

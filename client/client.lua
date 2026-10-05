@@ -4,7 +4,7 @@ local contractorPed = nil
 local contractorBlip = nil
 local contractPrompt = nil
 local promptGroup = GetRandomIntInRange(0, 0xffffff)
-local contractsTaken = false
+local activeJobId = nil -- currently active contract (nil = none)
 
 local function BlipForCoords(style, x, y, z)
     if BlipAddForCoords then
@@ -142,6 +142,8 @@ CreateThread(function()
 end)
 
 -- Hold-L prompt loop: shows "Take contracts" near the contractor.
+-- Shows every time you come near (even with an active job) so the
+-- board can always be reopened.
 CreateThread(function()
     while true do
         local sleep = 1000
@@ -150,14 +152,13 @@ CreateThread(function()
             local playerCoords = GetEntityCoords(playerPed)
             local c = Config.Contractor.coords
             local dist = #(playerCoords - vector3(c.x, c.y, c.z))
-            if dist < Config.Prompt.radius and not contractsTaken then
+            if dist < Config.Prompt.radius then
                 sleep = 0
                 local groupName = VarString(10, "LITERAL_STRING", Config.Prompt.groupName)
                 UiPromptSetActiveGroupThisFrame(promptGroup, groupName, 0, 0, 0, 0)
                 if UiPromptHasHoldModeCompleted(contractPrompt) then
-                    contractsTaken = true
                     TriggerEvent("coi_multi_deli:client:contractsTaken")
-                    Wait(1000)
+                    Wait(2000) -- cooldown so one hold = one open
                 end
             end
         end
@@ -165,13 +166,21 @@ CreateThread(function()
     end
 end)
 
+local function JobName(jobId)
+    for _, job in ipairs(Config.Jobs) do
+        if job.id == jobId then return job.name end
+    end
+    return tostring(jobId)
+end
+
 -- Next phase hooks in here. Placeholder feedback for now.
 RegisterNetEvent("coi_multi_deli:client:contractsTaken", function()
     print("[coi_multi_deli] contracts taken - opening jobs board")
     SetNuiFocus(true, true)
     SendNUIMessage({
         action = "openJobs",
-        jobs = Config.Jobs
+        jobs = Config.Jobs,
+        activeJobId = activeJobId
     })
 end)
 
@@ -180,15 +189,33 @@ RegisterNUICallback("closeJobs", function(_, cb)
     SetNuiFocus(false, false)
 end)
 
--- UI only for now: just close the board and confirm the pick.
+-- Start a contract: mark it active so the pill + cancel option show up.
 RegisterNUICallback("startJob", function(data, cb)
     cb({ ok = true })
     SetNuiFocus(false, false)
-    local jobId = data and data.jobId or "unknown"
-    print("[coi_multi_deli] start job picked: " .. tostring(jobId))
+    SendNUIMessage({ action = "closeJobs" }) -- make sure the board hides
+    activeJobId = data and data.jobId or nil
+    print("[coi_multi_deli] contract started: " .. tostring(activeJobId))
+    SendNUIMessage({ action = "setActiveJob", activeJobId = activeJobId })
     if GetResourceState("vorp_core") == "started" then
         pcall(function()
-            TriggerEvent("vorp:TipRight", "Job selected: " .. tostring(jobId), 4000)
+            TriggerEvent("vorp:TipRight", "Contract started: " .. JobName(activeJobId), 4000)
+        end)
+    end
+end)
+
+-- Cancel the active contract, from the board button or the pill.
+RegisterNUICallback("cancelJob", function(_, cb)
+    cb({ ok = true })
+    SetNuiFocus(false, false)
+    SendNUIMessage({ action = "closeJobs" }) -- make sure the board hides
+    if not activeJobId then return end
+    print("[coi_multi_deli] contract cancelled: " .. tostring(activeJobId))
+    activeJobId = nil
+    SendNUIMessage({ action = "setActiveJob", activeJobId = nil })
+    if GetResourceState("vorp_core") == "started" then
+        pcall(function()
+            TriggerEvent("vorp:TipRight", "Contract cancelled", 4000)
         end)
     end
 end)
