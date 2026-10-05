@@ -42,5 +42,12 @@ Config.Jobs = {
         level = 1,
         image = "https://placehold.co/600x400/2a2118/d9b36a?text=NEWSPAPER",
         rewards = { "Money", "Job XP", "Tips", "Contacts" },
+        -- Paper bundle pickup: props spawn here while this job is active.
+        pickup = vector4(-185.5484, 641.8805, 113.5820, 40.8867),
+        props = {
+            { model = "p_group_newspaper01", offset = { x = 0.0, y = 0.0, z = 0.0 } },
+            { model = "p_group_newspaper02", offset = { x = 0.7, y = 0.3, z = 0.0 } },
+            { model = "p_group_newspaper03", offset = { x = -0.7, y = 0.3, z = 0.0 } },
+        },
     },
 }

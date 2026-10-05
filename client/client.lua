@@ -166,11 +166,78 @@ CreateThread(function()
     end
 end)
 
-local function JobName(jobId)
+-- Radar GPS route to a point (follow-path along roads, minimap + map).
+-- Set ONCE per target, never on a timer (flickers otherwise).
+local function GpsClear()
+    if ClearGpsMultiRoute then ClearGpsMultiRoute() end
+    if SetGpsMultiRouteRender then SetGpsMultiRouteRender(false) end
+end
+
+local function GpsTo(x, y, z)
+    if not x or not y or not z then return end
+    GpsClear()
+    local pCoords = GetEntityCoords(PlayerPedId())
+    StartGpsMultiRoute(joaat("COLOR_YELLOW"), true, true)
+    AddPointToGpsMultiRoute(pCoords.x, pCoords.y, pCoords.z, false)
+    AddPointToGpsMultiRoute(x, y, z, false)
+    SetGpsMultiRouteRender(true)
+    print(("[coi_multi_deli] GPS route to (%.2f, %.2f, %.2f)"):format(x, y, z))
+end
+
+local function JobById(jobId)
     for _, job in ipairs(Config.Jobs) do
-        if job.id == jobId then return job.name end
+        if job.id == jobId then return job end
     end
+    return nil
+end
+
+local function JobName(jobId)
+    local job = JobById(jobId)
+    if job then return job.name end
     return tostring(jobId)
+end
+
+-- Newspaper pickup props: spawned while the job is active.
+local pickupProps = {}
+
+local function ClearPickupProps()
+    for _, obj in ipairs(pickupProps) do
+        if DoesEntityExist(obj) then DeleteObject(obj) end
+    end
+    pickupProps = {}
+end
+
+local function SpawnPickupProps(job)
+    ClearPickupProps()
+    if not job or not job.pickup or not job.props then return end
+    local p = job.pickup
+    for _, entry in ipairs(job.props) do
+        local hash = joaat(entry.model)
+        if not IsModelValid(hash) then
+            print("[coi_multi_deli] invalid prop model: " .. tostring(entry.model))
+        else
+            RequestModel(hash)
+            local timeout = 0
+            while not HasModelLoaded(hash) and timeout < 10000 do
+                Wait(50)
+                timeout = timeout + 50
+            end
+            if HasModelLoaded(hash) then
+                local o = entry.offset or { x = 0.0, y = 0.0, z = 0.0 }
+                local obj = CreateObject(hash, p.x + o.x, p.y + o.y, p.z + (o.z or 0.0), false, false, false, false, true)
+                if DoesEntityExist(obj) then
+                    SetEntityHeading(obj, p.w)
+                    PlaceObjectOnGroundProperly(obj)
+                    FreezeEntityPosition(obj, true)
+                    table.insert(pickupProps, obj)
+                end
+                SetModelAsNoLongerNeeded(hash)
+            else
+                print("[coi_multi_deli] prop model failed to load: " .. tostring(entry.model))
+            end
+        end
+    end
+    print("[coi_multi_deli] spawned " .. #pickupProps .. " pickup props")
 end
 
 -- Next phase hooks in here. Placeholder feedback for now.
@@ -197,6 +264,12 @@ RegisterNUICallback("startJob", function(data, cb)
     activeJobId = data and data.jobId or nil
     print("[coi_multi_deli] contract started: " .. tostring(activeJobId))
     SendNUIMessage({ action = "setActiveJob", activeJobId = activeJobId })
+    local startedJob = JobById(activeJobId)
+    SpawnPickupProps(startedJob) -- bundles appear at the pickup point
+    if startedJob and startedJob.pickup then
+        local p = startedJob.pickup
+        GpsTo(p.x, p.y, p.z) -- radar waypoint path to the paper location
+    end
     if GetResourceState("vorp_core") == "started" then
         pcall(function()
             TriggerEvent("vorp:TipRight", "Contract started: " .. JobName(activeJobId), 4000)
@@ -212,6 +285,8 @@ RegisterNUICallback("cancelJob", function(_, cb)
     if not activeJobId then return end
     print("[coi_multi_deli] contract cancelled: " .. tostring(activeJobId))
     activeJobId = nil
+    ClearPickupProps()
+    GpsClear()
     SendNUIMessage({ action = "setActiveJob", activeJobId = nil })
     if GetResourceState("vorp_core") == "started" then
         pcall(function()
@@ -222,6 +297,8 @@ end)
 
 AddEventHandler("onResourceStop", function(resourceName)
     if resourceName ~= GetCurrentResourceName() then return end
+    ClearPickupProps()
+    GpsClear()
     if contractorPed and DoesEntityExist(contractorPed) then
         DeletePed(contractorPed)
     end
