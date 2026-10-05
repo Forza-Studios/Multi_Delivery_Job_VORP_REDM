@@ -167,10 +167,28 @@ end)
 
 -- Next phase hooks in here. Placeholder feedback for now.
 RegisterNetEvent("coi_multi_deli:client:contractsTaken", function()
-    print("[coi_multi_deli] contracts taken")
+    print("[coi_multi_deli] contracts taken - opening jobs board")
+    SetNuiFocus(true, true)
+    SendNUIMessage({
+        action = "openJobs",
+        jobs = Config.Jobs
+    })
+end)
+
+RegisterNUICallback("closeJobs", function(_, cb)
+    cb({ ok = true })
+    SetNuiFocus(false, false)
+end)
+
+-- UI only for now: just close the board and confirm the pick.
+RegisterNUICallback("startJob", function(data, cb)
+    cb({ ok = true })
+    SetNuiFocus(false, false)
+    local jobId = data and data.jobId or "unknown"
+    print("[coi_multi_deli] start job picked: " .. tostring(jobId))
     if GetResourceState("vorp_core") == "started" then
         pcall(function()
-            TriggerEvent("vorp:TipRight", "Contracts taken", 4000)
+            TriggerEvent("vorp:TipRight", "Job selected: " .. tostring(jobId), 4000)
         end)
     end
 end)

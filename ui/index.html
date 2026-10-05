@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Frontier Jobs</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="jobs-board" class="hidden">
+    <div class="board-frame">
+
+      <!-- ============ SIDEBAR ============ -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-hat">&#9835;</div>
+          <h1>JOBS</h1>
+          <p>MAKE A LIVING IN THE FRONTIER</p>
+        </div>
+        <nav id="job-nav">
+          <button class="nav-item active" data-filter="all"><span class="nav-ico">&#9783;</span>All Jobs</button>
+          <button class="nav-item" data-filter="hunting"><span class="nav-ico">&#9679;</span>Hunting</button>
+          <button class="nav-item" data-filter="mining"><span class="nav-ico">&#9874;</span>Mining</button>
+          <button class="nav-item" data-filter="farming"><span class="nav-ico">&#10087;</span>Farming</button>
+          <button class="nav-item" data-filter="trading"><span class="nav-ico">&#9785;</span>Traders</button>
+          <button class="nav-item" data-filter="law"><span class="nav-ico">&#9733;</span>Law &amp; Order</button>
+          <button class="nav-item" data-filter="bounty"><span class="nav-ico">&#9678;</span>Bounty Hunting</button>
+          <button class="nav-item" data-filter="moonshining"><span class="nav-ico">&#9749;</span>Moonshining</button>
+          <button class="nav-item" data-filter="crafting"><span class="nav-ico">&#9874;</span>Crafting</button>
+          <button class="nav-item" data-filter="services"><span class="nav-ico">&#9990;</span>Services</button>
+        </nav>
+      </aside>
+
+      <!-- ============ MAIN ============ -->
+      <main class="main">
+        <section class="banner">
+          <img id="banner-img" src="https://placehold.co/1200x300/1d1712/d9b36a?text=CHOOSE+YOUR+PATH" alt="Choose your path">
+          <div class="banner-text">
+            <h2>CHOOSE YOUR PATH</h2>
+            <p>DIFFERENT JOBS. DIFFERENT STORIES.<br>EARN MONEY, GAIN XP, UNLOCK REWARDS.</p>
+          </div>
+          <button id="btn-close" title="Close">&#10005;</button>
+        </section>
+
+        <h3 class="section-title">AVAILABLE JOBS</h3>
+        <section id="job-grid"></section>
+      </main>
+
+      <!-- ============ DETAIL ============ -->
+      <aside class="detail">
+        <div class="detail-img-wrap">
+          <img id="detail-img" src="https://placehold.co/600x400/2a2118/d9b36a?text=HUNTING" alt="Job">
+        </div>
+        <h2 id="detail-name">HUNTING</h2>
+        <p id="detail-tagline" class="tagline">Track. Hunt. Survive.</p>
+        <p id="detail-desc"></p>
+        <h4>REQUIREMENTS</h4>
+        <p id="detail-req" class="req"><span class="tick">&#10003;</span><span id="detail-req-text"></span></p>
+        <h4>REWARDS</h4>
+        <div id="detail-rewards"></div>
+        <button id="btn-start">START JOB <span>&#10095;</span></button>
+      </aside>
+
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

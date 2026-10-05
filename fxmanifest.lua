@@ -3,7 +3,7 @@ game 'rdr3'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
 
-name 'coi_multi_deli'
+name 'coi_multi_job'
 author '_forza'
 description 'COI multi job contracts system'
 version '0.1.0'
@@ -15,4 +15,12 @@ shared_scripts {
 
 client_scripts {
     'client/client.lua'
+}
+
+ui_page 'ui/index.html'
+
+files {
+    'ui/index.html',
+    'ui/style.css',
+    'ui/app.js'
 }
