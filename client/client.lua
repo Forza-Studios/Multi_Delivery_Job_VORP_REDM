@@ -17,9 +17,9 @@ end
 Citizen.CreateThread(function()
 
     for i, location in ipairs(J0.locations) do
-        local blip = jo.blip.create(vec3(location.coords.x, location.coords.y, location.coords.z), location.name, "blip_ambient_wagon")
+        local blip = jo.blip.create(vec3(location.coords.x, location.coords.y, location.coords.z), location.name, "blip_player_coach")
         table.insert(blips, blip)
-        local ped = jo.entity.create('mp_chu_rob_fortmercer_males_01', vec3(location.coords.x, location.coords.y, location.coords.z), 90.0, true)
+        local ped = jo.entity.create('a_m_m_armtownfolk_01', vec3(location.coords.x, location.coords.y, location.coords.z), 90.0, true)
         table.insert(peds, ped)
         FreezeEntityPosition(ped, true)
         SetEntityInvincible(ped, true)
@@ -30,7 +30,7 @@ Citizen.CreateThread(function()
     local isNearLocation = false
     local currentLocation = nil
     local promptCreated = false
-    local promptLabel = "Interact With Frontier Express"
+    local promptLabel = "Interact With Frontier Delivery"
     while true do
         Citizen.Wait(100)
         

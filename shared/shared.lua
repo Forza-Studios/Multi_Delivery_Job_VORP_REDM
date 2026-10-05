@@ -11,8 +11,8 @@ J0 = {
 
     locations = {
         {
-            name = "Valentine Frontier Express", 
-            coords = vector3(-179.0, 626.0, 113.0),
+            name = "Valentine Frontier Delivery", 
+            coords = vector4(-232.4925, 635.0405, 113.2936, 261.8642),  
             BoxDepo = vector4(-180.4367, 649.1989, 112.5790, 58.6727),
             spawn = {
                 coords = vector3(-187.3921, 650.9539, 112.4330),
