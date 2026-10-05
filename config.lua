@@ -19,3 +19,12 @@ Config.Blip = {
     -- Base blip style (standard point blip, same pattern as other COI scripts)
     style = 1664425300,
 }
+
+-- Hold-L prompt to take contracts when near the contractor.
+Config.Prompt = {
+    control = 0x80F28E95, -- L key
+    text = "Take contracts",
+    groupName = "Contractor",
+    radius = 2.5,
+    holdTime = 10000, -- 10 sec hold
+}

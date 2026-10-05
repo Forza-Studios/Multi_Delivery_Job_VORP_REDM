@@ -2,6 +2,9 @@
 
 local contractorPed = nil
 local contractorBlip = nil
+local contractPrompt = nil
+local promptGroup = GetRandomIntInRange(0, 0xffffff)
+local contractsTaken = false
 
 local function BlipForCoords(style, x, y, z)
     if BlipAddForCoords then
@@ -60,6 +63,17 @@ local function CreateContractorBlip()
     SetBlipNameSafe(contractorBlip, b.name)
 end
 
+local function RegisterContractPrompt()
+    contractPrompt = UiPromptRegisterBegin()
+    UiPromptSetControlAction(contractPrompt, Config.Prompt.control) -- L key
+    UiPromptSetText(contractPrompt, VarString(10, "LITERAL_STRING", Config.Prompt.text))
+    UiPromptSetEnabled(contractPrompt, true)
+    UiPromptSetVisible(contractPrompt, true)
+    UiPromptSetHoldMode(contractPrompt, Config.Prompt.holdTime) -- 10 sec hold
+    UiPromptSetGroup(contractPrompt, promptGroup, 0)
+    UiPromptRegisterEnd(contractPrompt)
+end
+
 local function SpawnContractor()
     local cfg = Config.Contractor
     local hash = joaat(cfg.model)
@@ -108,6 +122,7 @@ end
 CreateThread(function()
     CreateContractorBlip()
     SpawnContractor()
+    RegisterContractPrompt()
 
     -- Keep contractor alive for the whole session
     while true do
@@ -123,6 +138,40 @@ CreateThread(function()
         if not contractorBlip or not DoesBlipExist(contractorBlip) then
             CreateContractorBlip()
         end
+    end
+end)
+
+-- Hold-L prompt loop: shows "Take contracts" near the contractor.
+CreateThread(function()
+    while true do
+        local sleep = 1000
+        local playerPed = PlayerPedId()
+        if playerPed and playerPed ~= 0 and contractorPed and DoesEntityExist(contractorPed) then
+            local playerCoords = GetEntityCoords(playerPed)
+            local c = Config.Contractor.coords
+            local dist = #(playerCoords - vector3(c.x, c.y, c.z))
+            if dist < Config.Prompt.radius and not contractsTaken then
+                sleep = 0
+                local groupName = VarString(10, "LITERAL_STRING", Config.Prompt.groupName)
+                UiPromptSetActiveGroupThisFrame(promptGroup, groupName, 0, 0, 0, 0)
+                if UiPromptHasHoldModeCompleted(contractPrompt) then
+                    contractsTaken = true
+                    TriggerEvent("coi_multi_deli:client:contractsTaken")
+                    Wait(1000)
+                end
+            end
+        end
+        Wait(sleep)
+    end
+end)
+
+-- Next phase hooks in here. Placeholder feedback for now.
+RegisterNetEvent("coi_multi_deli:client:contractsTaken", function()
+    print("[coi_multi_deli] contracts taken")
+    if GetResourceState("vorp_core") == "started" then
+        pcall(function()
+            TriggerEvent("vorp:TipRight", "Contracts taken", 4000)
+        end)
     end
 end)
 
